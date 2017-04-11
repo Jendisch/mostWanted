@@ -1,44 +1,54 @@
-/*
-Build all of your functions for displaying and gathering information below (GUI).
-*/
 
-// app is the function called to start the entire application
+
 function app(people){
   var searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
   switch(searchType){
     case 'yes':
-    // TODO: search by name
+		var filteredNames = searchByName(people);
+		mainMenu(filteredNames, people);
     break;
     case 'no':
-    // TODO: search by traits
+		//search through a trait
     break;
     default:
-    app(people); // restart app
+    app(people); 
     break;
   }
 }
 
-// Menu function to call once you find who you are looking for
-function mainMenu(person, people){
+function searchByName(people){
+	var firstName = promptFor("What is the person's first name?", chars);
+	var lastName = promptFor("What is the person's last name?", chars);
+	var filteredName = people.filter(function(el){
+		if (el.firstName.toLowerCase() === firstName && el.lastName.toLowerCase() === lastName){
+			return true;
+			
+		} else {
+			return false;
+		}
+	});
+	return filteredName;
+}
+
+function mainMenu(filteredName, people){
 
   /* Here we pass in the entire person object that we found in our search, as well as the entire original dataset of people. We need people in order to find descendants and other information that the user may want. */
 
-  if(!person){
-    alert("Could not find that individual.");
-    return app(people); // restart
+  if(filteredName.length < 1){
+    alert("Unable to find person with that name in our database, please enter another name.");
+    return app(people); 
   }
-
-  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'");
-
+  var displayOption = prompt("Found " + filteredName[0].firstName + " " + filteredName[0].lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'").toLowerCase();
+	
   switch(displayOption){
     case "info":
-    // TODO: get person's info
+		displayPerson(filteredName);
     break;
     case "family":
     // TODO: get person's family
     break;
     case "descendants":
-    // TODO: get person's descendants
+		searchDecendants(filteredName, people);
     break;
     case "restart":
     app(people); // restart
@@ -46,32 +56,48 @@ function mainMenu(person, people){
     case "quit":
     return; // stop execution
     default:
-    return mainMenu(person, people); // ask again
+    return mainMenu(filteredName, people); // ask again
   }
 }
 
-function searchByName(people){
-  var firstName = promptFor("What is the person's first name?", chars);
-  var lastName = promptFor("What is the person's last name?", chars);
-
-  // TODO: find the person using the name they entered
-
+function displayPerson(filteredName){
+  var personInfo = "First Name: " + filteredName[0].firstName + "\n";
+  personInfo += "Last Name: " + filteredName[0].lastName + "\n"; 
+  personInfo += "Gender: " + filteredName[0].gender + "\n";
+  personInfo += "Date of Birth: " + filteredName[0].dob + "\n";
+  personInfo += "Height: " + filteredName[0].height + "\n";
+  personInfo += "Weight: " + filteredName[0].weight + "\n";
+  personInfo += "Eye Color: " + filteredName[0].eyeColor + "\n";
+  personInfo += "Occupation: " + filteredName[0].occupation + "\n";
+  personInfo += "Parents: " + filteredName[0].parents + "\n";
+  personInfo += "Current Spouse: " + filteredName[0].currentSpouse + "\n";
+  alert(personInfo);
 }
 
+function searchDecendants (filteredName, people) {
+	var filteredNameKids = people.filter(function(el, index){
+		if (el.id.index === filteredName[0].id) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+	console.log(filteredNameKids);
+	alert("The descendants of " + filteredName[0].firstName + " " + filteredName[0].lastName + ": " + filteredNameKids + ".");
+	return filteredNameKids;
+}
+
+
+	
+
+
+
+					
 // alerts a list of people
 function displayPeople(people){
   alert(people.map(function(person){
     return person.firstName + " " + person.lastName;
   }).join("\n"));
-}
-
-function displayPerson(person){
-  // print all of the information about a person:
-  // height, weight, age, name, occupation, eye color.
-  var personInfo = "First Name: " + person.firstName + "\n";
-  personInfo += "Last Name: " + person.lastName + "\n";
-  // TODO: finish getting the rest of the information to display
-  alert(personInfo);
 }
 
 // function that prompts and validates user input
