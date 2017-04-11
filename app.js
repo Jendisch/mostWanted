@@ -4,8 +4,7 @@ function app(people){
   var searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
   switch(searchType){
     case 'yes':
-		var filteredNames = searchByName(people);
-		mainMenu(filteredNames, people);
+		searchByName(people);
     break;
     case 'no':
 		//search through a trait
@@ -17,35 +16,45 @@ function app(people){
 }
 
 function searchByName(people){
-	var firstName = promptFor("What is the person's first name?", chars);
-	var lastName = promptFor("What is the person's last name?", chars);
-	var filteredName = people.filter(function(el){
+	var firstName = prompt("What is the person's first name?");
+	var lastName = prompt("What is the person's last name?");
+	var person = people.filter(function(el){
 		if (el.firstName.toLowerCase() === firstName && el.lastName.toLowerCase() === lastName){
 			return true;
 		} else {
 			return false;
 		}
 	});
-	return filteredName;
+	mainMenu (person[0], people);
 }
 
-function mainMenu(filteredName, people){
 
-  if(filteredName.length <= 0){
+/*
+
+
+*/
+
+
+
+
+function mainMenu(person, people){
+
+  if(person.length <= 0){
     alert("Unable to find person with that name in our database, please enter another name.");
     return app(people); 
   }
-  var displayOption = prompt("Found " + filteredName[0].firstName + " " + filteredName[0].lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'").toLowerCase();
+  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'").toLowerCase();
 	
   switch(displayOption){
     case "info":
-		displayPerson(filteredName);
+		displayPerson(person);
     break;
     case "family":
-		searchForFamily(filteredName, people);
+		searchForFamily(person, people);
     break;
     case "descendants":
-		searchDescendants(filteredName, people);
+		var descendantsAll = searchDescendants(person, people);
+		displayPeople(descendantsAll);
     break;
     case "restart":
 		app(people); // restart
@@ -53,85 +62,54 @@ function mainMenu(filteredName, people){
     case "quit":
 		return; // stop execution
     default:
-		return mainMenu(filteredName, people); // ask again
+		return mainMenu(person, people); // ask again
   }
 }
 
-function displayPerson(filteredName){
-  var personInfo = "First Name: " + filteredName[0].firstName + "\n";
-	personInfo += "Last Name: " + filteredName[0].lastName + "\n"; 
-	personInfo += "Gender: " + filteredName[0].gender + "\n";
-	personInfo += "Date of Birth: " + filteredName[0].dob + "\n";
-	personInfo += "Height: " + filteredName[0].height + "\n";
-	personInfo += "Weight: " + filteredName[0].weight + "\n";
-	personInfo += "Eye Color: " + filteredName[0].eyeColor + "\n";
-	personInfo += "Occupation: " + filteredName[0].occupation + "\n";
-	personInfo += "Parents: " + filteredName[0].parents + "\n";
-	personInfo += "Current Spouse: " + filteredName[0].currentSpouse + "\n";
+function displayPerson(person){
+  var personInfo = "First Name: " + person.firstName + "\n";
+	personInfo += "Last Name: " + person.lastName + "\n"; 
+	personInfo += "Gender: " + person.gender + "\n";
+	personInfo += "Date of Birth: " + person.dob + "\n";
+	personInfo += "Height: " + person.height + "\n";
+	personInfo += "Weight: " + person.weight + "\n";
+	personInfo += "Eye Color: " + person.eyeColor + "\n";
+	personInfo += "Occupation: " + person.occupation + "\n";
+	personInfo += "Parents: " + person.parents + "\n";
+	personInfo += "Current Spouse: " + person.currentSpouse + "\n";
 	alert(personInfo);
 }
 
-function searchDescendants (filteredName, people) {
-	var filteredNameKids = [];
-	for (var i = 0; i < people.length; i++) {
-			if (people[i].parents.includes(filteredName[0].id)) {
-				filteredNameKids.push(people[i].firstName + " " + people[i].lastName);
-			}	
+function searchDescendants (person, people, filteredNameKids = []) {
+	var descendants = people.filter(function(el) {
+		return el.parents.includes(person.id)
+	});
+	if (descendants <=0) {
+		return filteredNameKids;
 	}
-		
-		if(filteredNameKids.length <= 0){
-			alert(filteredName[0].firstName + " " + filteredName[0].lastName + " has no descendants. Please begin a new search.");
-			return mainMenu(filteredName, people); 
-  }
-							/*
-	alert("The descendants of " + filteredName[0].firstName + " " + filteredName[0].lastName + ": " + filteredNameKids + "." );
-	return app(people);
-							*/
+	
+	descendants.map(function(obj) {
+		filteredNameKids.push(obj)
+	});
+	
+	for (var i = 0; i < descendants.length; i++) {
+		filteredNameKids = searchDescendants(descendants[i], people, filteredNameKids);
+	}
+	return filteredNameKids;
 }
+
+
 	
 	
 	
 	
-	
-	
-function searchForFamily (filteredName, people) {
+function searchForFamily (person, people) {
 
 
 
 }	
 
 
-
-
-
-				/*
-	filteredNameKids = people[i].parents.filter(function(o){
-			if (o === filteredName[0].id) {
-				filteredNameKids.push(people[i]);
-			} else {
-				return false;
-		}
-	});	
-				*/
-	
-				/*
-				
-var filteredNameKids = people.filter(function(el){
-		if (el.parents === filteredName[0].id) {
-			return true;
-			console.log(el.firstName[0] + " " + el.lastName[0]);
-			return el.firstName[i] + " " + el.lastName[i]
-		} else {
-			return false;
-		}
-	});
-	alert("The descendants of " + filteredName[0].firstName + " " + filteredName[0].lastName + ": " + filteredNameKids + ".");
-	return filteredNameKids;
-
-				*/
-	
-	
-	
 
 
 
