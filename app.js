@@ -11,7 +11,7 @@ function app(people){
 		//search through a trait
     break;
     default:
-    app(people); 
+		app(people); 
     break;
   }
 }
@@ -31,8 +31,6 @@ function searchByName(people){
 
 function mainMenu(filteredName, people){
 
-  /* Here we pass in the entire person object that we found in our search, as well as the entire original dataset of people. We need people in order to find descendants and other information that the user may want. */
-
   if(filteredName.length <= 0){
     alert("Unable to find person with that name in our database, please enter another name.");
     return app(people); 
@@ -44,33 +42,33 @@ function mainMenu(filteredName, people){
 		displayPerson(filteredName);
     break;
     case "family":
-    // TODO: get person's family
+		searchForFamily(filteredName, people);
     break;
     case "descendants":
 		searchDescendants(filteredName, people);
     break;
     case "restart":
-    app(people); // restart
+		app(people); // restart
     break;
     case "quit":
-    return; // stop execution
+		return; // stop execution
     default:
-    return mainMenu(filteredName, people); // ask again
+		return mainMenu(filteredName, people); // ask again
   }
 }
 
 function displayPerson(filteredName){
   var personInfo = "First Name: " + filteredName[0].firstName + "\n";
-  personInfo += "Last Name: " + filteredName[0].lastName + "\n"; 
-  personInfo += "Gender: " + filteredName[0].gender + "\n";
-  personInfo += "Date of Birth: " + filteredName[0].dob + "\n";
-  personInfo += "Height: " + filteredName[0].height + "\n";
-  personInfo += "Weight: " + filteredName[0].weight + "\n";
-  personInfo += "Eye Color: " + filteredName[0].eyeColor + "\n";
-  personInfo += "Occupation: " + filteredName[0].occupation + "\n";
-  personInfo += "Parents: " + filteredName[0].parents + "\n";
-  personInfo += "Current Spouse: " + filteredName[0].currentSpouse + "\n";
-  alert(personInfo);
+	personInfo += "Last Name: " + filteredName[0].lastName + "\n"; 
+	personInfo += "Gender: " + filteredName[0].gender + "\n";
+	personInfo += "Date of Birth: " + filteredName[0].dob + "\n";
+	personInfo += "Height: " + filteredName[0].height + "\n";
+	personInfo += "Weight: " + filteredName[0].weight + "\n";
+	personInfo += "Eye Color: " + filteredName[0].eyeColor + "\n";
+	personInfo += "Occupation: " + filteredName[0].occupation + "\n";
+	personInfo += "Parents: " + filteredName[0].parents + "\n";
+	personInfo += "Current Spouse: " + filteredName[0].currentSpouse + "\n";
+	alert(personInfo);
 }
 
 function searchDescendants (filteredName, people) {
@@ -80,14 +78,27 @@ function searchDescendants (filteredName, people) {
 				filteredNameKids.push(people[i].firstName + " " + people[i].lastName);
 			}	
 	}
+		
 		if(filteredNameKids.length <= 0){
 			alert(filteredName[0].firstName + " " + filteredName[0].lastName + " has no descendants. Please begin a new search.");
 			return mainMenu(filteredName, people); 
   }
+							/*
 	alert("The descendants of " + filteredName[0].firstName + " " + filteredName[0].lastName + ": " + filteredNameKids + "." );
 	return app(people);
+							*/
 }
 	
+	
+	
+	
+	
+	
+function searchForFamily (filteredName, people) {
+
+
+
+}	
 
 
 
