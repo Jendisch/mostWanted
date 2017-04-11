@@ -22,7 +22,6 @@ function searchByName(people){
 	var filteredName = people.filter(function(el){
 		if (el.firstName.toLowerCase() === firstName && el.lastName.toLowerCase() === lastName){
 			return true;
-			
 		} else {
 			return false;
 		}
@@ -34,7 +33,7 @@ function mainMenu(filteredName, people){
 
   /* Here we pass in the entire person object that we found in our search, as well as the entire original dataset of people. We need people in order to find descendants and other information that the user may want. */
 
-  if(filteredName.length < 1){
+  if(filteredName.length <= 0){
     alert("Unable to find person with that name in our database, please enter another name.");
     return app(people); 
   }
@@ -48,7 +47,7 @@ function mainMenu(filteredName, people){
     // TODO: get person's family
     break;
     case "descendants":
-		searchDecendants(filteredName, people);
+		searchDescendants(filteredName, people);
     break;
     case "restart":
     app(people); // restart
@@ -74,21 +73,56 @@ function displayPerson(filteredName){
   alert(personInfo);
 }
 
-function searchDecendants (filteredName, people) {
-	var filteredNameKids = people.filter(function(el, index){
-		if (el.id.index === filteredName[0].id) {
+function searchDescendants (filteredName, people) {
+	var filteredNameKids = [];
+	for (var i = 0; i < people.length; i++) {
+			if (people[i].parents.includes(filteredName[0].id)) {
+				filteredNameKids.push(people[i].firstName + " " + people[i].lastName);
+			}	
+	}
+		if(filteredNameKids.length <= 0){
+			alert(filteredName[0].firstName + " " + filteredName[0].lastName + " has no descendants. Please begin a new search.");
+			return mainMenu(filteredName, people); 
+  }
+	alert("The descendants of " + filteredName[0].firstName + " " + filteredName[0].lastName + ": " + filteredNameKids + "." );
+	return app(people);
+}
+	
+
+
+
+
+
+				/*
+	filteredNameKids = people[i].parents.filter(function(o){
+			if (o === filteredName[0].id) {
+				filteredNameKids.push(people[i]);
+			} else {
+				return false;
+		}
+	});	
+				*/
+	
+				/*
+				
+var filteredNameKids = people.filter(function(el){
+		if (el.parents === filteredName[0].id) {
 			return true;
+			console.log(el.firstName[0] + " " + el.lastName[0]);
+			return el.firstName[i] + " " + el.lastName[i]
 		} else {
 			return false;
 		}
 	});
-	console.log(filteredNameKids);
 	alert("The descendants of " + filteredName[0].firstName + " " + filteredName[0].lastName + ": " + filteredNameKids + ".");
 	return filteredNameKids;
-}
 
-
+				*/
 	
+	
+	
+
+
 
 
 
