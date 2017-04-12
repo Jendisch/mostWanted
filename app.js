@@ -43,8 +43,8 @@ function mainMenu(person, people){
 		displayPerson(person);
     break;
     case "family":
-		children = findChildren(person, people);
 		spouse = findSpouse (person, people);
+		children = findChildren(person, people);
 		parents = findParents (person, people);
 		siblings = findSiblings (person, people);
 		displayPeople(children);
@@ -57,7 +57,9 @@ function mainMenu(person, people){
 		displayPeople(descendantsAll);
     break;
 	case "next of kin":
-		findNextOfKin (person, people);
+		grandparents = findGrandparents (person, people)
+		displayPeople(grandparents);
+		//findNextOfKin (person, people);
 	break;
     case "restart":
 		app(people); // restart
@@ -141,11 +143,43 @@ function findSiblings (person, people) {
 }
 
 
+function findGrandchild (person, people) {
+	var child = [];
+	var grandchild = [];
+	child = people.filter(function(el) {
+		return el.parents.includes(person.id)
+	});
+	for (var i = 0; i < child.length; i++) {		
+		grandchild.push(...people.filter(function(obj) {
+		return obj.parents.includes(child[i].id)
+	}));
+	}
+	return grandchild;
+}		
+		
+			
+function findGrandparents (person, people) {
+	var momDad = [];
+	var grandparents = [];
+	momDad = people.filter(function(el) {
+		return person.parents.includes(el.id)
+	});
+	for (var i = 0; i < momDad.length; i++) {		
+		grandparents.push(...people.filter(function(obj) {
+		return momDad[i].parents.includes(obj.id)
+	}));
+	}
+	return grandparents;
+}	
+
+
 function findNextOfKin (person, people) {
 	spouse = findSpouse (person, people);
 	children = findChildren(person, people);
 	parents = findParents (person, people);
 	siblings = findSiblings (person, people);
+	grandchild = findGrandchild (person, people);
+	grandparents = findGrandparents (person, people);
 }
 
 function findNieceNephew (person, people) {
