@@ -33,44 +33,30 @@ function searchByName(people){
 function mainMenu(person, people){
 
   if(person.length <= 0){
-    alert("Unable to find person with that name in our database, please enter another name.");
+		alert("Unable to find person with that name in our database, please enter another name.");
     return app(people); 
   }
-  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', 'descendants', or 'next of kin'? Type the option you want or 'restart' or 'quit'").toLowerCase();
+  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'descendants', 'family', or 'next of kin'? Type the option you want or 'restart' or 'quit'").toLowerCase();
 	
   switch(displayOption){
     case "info":
 		displayPerson(person);
     break;
-    case "family":
-		spouse = findSpouse (person, people);
-		children = findChildren(person, people);
-		parents = findParents (person, people);
-		siblings = findSiblings (person, people);
-		displayPeople(children);
-		displayPeople(spouse);
-		displayPeople(parents);
-		displayPeople(siblings);
-    break;
     case "descendants":
-		var descendantsAll = searchDescendants(person, people);
-		displayPeople(descendantsAll);
+		searchDescendants(person, people);
+    break;
+    case "family":
+		findSpouse (person, people);
+		findChildren(person, people);
+		findParents (person, people);
+		findSiblings (person, people);
     break;
 	case "next of kin":
-		greatGrandchild = findGreatGrandchild (person, people);
-		displayPeople(greatGrandchild);
-		//findNextOfKin (person, people);
+		findNextOfKin (person, people);
 	break;
     case "restart":
 		app(people); // restart
     break;
-    case "niece nephew":
-    	var nieceNeph = findNieceNephew (person, people);
-    	displayPeople(nieceNeph);
-    break
-    case "search and filter":
-    	var search = searchFilter (searchInput, people);
-    	displayPeople(auntUncle)
     case "quit":
 		return; // stop execution
     default:
@@ -92,11 +78,14 @@ function displayPerson(person){
 	alert(personInfo);
 }
 
+
 function searchDescendants (person, people, filteredNameKids = []) {
 	var descendants = people.filter(function(el) {
 		return el.parents.includes(person.id)
 	});
 	if (descendants <=0) {
+		alert(person.firstName + " " + person.lastName + " has no descendants.");
+		mainMenu(person, people);
 		return filteredNameKids;
 	}
 	
@@ -107,38 +96,81 @@ function searchDescendants (person, people, filteredNameKids = []) {
 	for (var i = 0; i < descendants.length; i++) {
 		filteredNameKids = searchDescendants(descendants[i], people, filteredNameKids);
 	}
+	if(filteredNameKids.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no descendants.");
+		mainMenu(person, people);
+	}
+	else {
+		alert(filteredNameKids.map(function(filteredNameKids){
+		return person.firstName + " " + person.lastName + "'s descendant: " + filteredNameKids.firstName + " " + filteredNameKids.lastName + ".";
+		}).join("\n"));
+	}
 	return filteredNameKids;
 }
-	
-	
-function findChildren (person, people) {
-	var children = people.filter(function(el) {
-		return el.parents.includes(person.id)
-	});
-	return children;
-}	
-
 
 function findSpouse (person, people) {
 	var spouse = people.filter(function(el) {
 		return el.currentSpouse === person.id
 	});
+	if(spouse.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no spouse.");
+	}
+	else {
+		alert(spouse.map(function(spouse){
+		return person.firstName + " " + person.lastName + "'s spouse: " + spouse.firstName + " " + spouse.lastName + ".";
+		}).join("\n"));
+	}
 	return spouse;
 }
 
+	
+function findChildren (person, people) {
+	var children = people.filter(function(el) {
+		return el.parents.includes(person.id)
+	});
+	if(children.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no children.");
+	}
+	else {
+		alert(children.map(function(children){
+		return person.firstName + " " + person.lastName + "'s child: " + children.firstName + " " + children.lastName + ".";
+		}).join("\n"));
+	}
+	return children;
+}	
+
 
 function findParents (person, people) {
-	var parents = people.filter(function(el) {
+	var parents = people.filter(function(el) {		
 		return el.id === person.parents[0] || el.id === person.parents[1]
 	});
+	if(parents.length === 0){
+		alert(person.firstName + " " + person.lastName + " doesn't know their parents.");
+	}
+	else {
+		alert(parents.map(function(parents){
+		return person.firstName + " " + person.lastName + "'s parent: " + parents.firstName + " " + parents.lastName + ".";
+		}).join("\n"));
+	}
 	return parents;
-}
+}	
 
 
 function findSiblings (person, people) {
 	var siblings = people.filter(function(el) {
+		if ( el.id === person.id){
+		return false;
+		}
 		return el.parents.includes(person.parents[0]) || el.parents.includes(person.parents[1])
 		});
+	if(siblings.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no siblings.");
+	}
+	else{
+		alert(siblings.map(function(siblings){
+		return person.firstName + " " + person.lastName + "'s sibling: " + siblings.firstName + " " + siblings.lastName + ".";
+		}).join("\n"));
+	}
 	return siblings;
 }
 
@@ -153,6 +185,14 @@ function findGrandchild (person, people) {
 		grandchild.push(...people.filter(function(obj) {
 		return obj.parents.includes(child[i].id)
 	}));
+	}
+	if(grandchild.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no grandchildren.");
+	}
+	else {
+		alert(grandchild.map(function(grandchild){
+		return person.firstName + " " + person.lastName + "'s grandchild: " + grandchild.firstName + " " + grandchild.lastName + ".";
+		}).join("\n"));
 	}
 	return grandchild;
 }		
@@ -169,12 +209,70 @@ function findGrandparents (person, people) {
 		return momDad[i].parents.includes(obj.id)
 	}));
 	}
+	if(grandparents.length === 0){
+		alert(person.firstName + " " + person.lastName + " doesn't know their grandparents.");
+	}
+	else{
+		alert(grandparents.map(function(grandparents){
+		return person.firstName + " " + person.lastName + "'s grandparent: " + grandparents.firstName + " " + grandparents.lastName + ".";
+		}).join("\n"));
+	}
 	return grandparents;
 }	
 
-function findGreatGrandchild (person, people, greatGrandchild = []) {
+function findNieceNephew (person, people) {
+	var siblings = people.filter(function (el) {
+		if ( el.id === person.id){
+		return false;
+		}
+		return el.parents.includes(person.parents[0]) || el.parents.includes(person.parents[1]) 
+	});
+	var nieceNephew = [];
+	for (var i = 0; i < siblings.length; i++) {
+		nieceNephew.push(...people.filter(function(el) {
+		return el.parents.includes(siblings[i].id)
+		}));
+	}
+	if(nieceNephew.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no nieces or nephews.");
+	}
+	else {
+		alert(nieceNephew.map(function(nieceNephew){
+		return person.firstName + " " + person.lastName + "'s niece/nephew: " + nieceNephew.firstName + " " + nieceNephew.lastName + ".";
+		}).join("\n"));
+	}
+	return nieceNephew;
+}
+
+
+function findAuntUncle (person, people) {
+	var parents = people.filter(function(el) {
+		return person.parents.includes(el.id);
+	})
+	var auntsUncles = [];
+	for (var i = 0; i < parents.length; i++) {
+		auntsUncles.push(...people.filter(function(el) {	
+			if ( el.id === parents[i].id){
+			return false;
+			}
+			return el.parents.includes(parents[i].parents[0]) || el.parents.includes(parents[i].parents[1]);
+		}));
+	}
+	if(auntsUncles.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no aunts or uncles.");
+	}
+	else {
+		alert(auntsUncles.map(function(auntsUncles){
+		return person.firstName + " " + person.lastName + "'s aunt/uncle: " + auntsUncles.firstName + " " + auntsUncles.lastName + ".";
+		}).join("\n"));
+	}
+	return auntsUncles;
+}
+
+
+function findGreatGrandchild (person, people) {
 	var child = [];
-	var grandchil = [];
+	var grandchild = [];
 	var greatGrandchild = [];
 	child = people.filter(function(el) {
 		return el.parents.includes(person.id)
@@ -189,72 +287,60 @@ function findGreatGrandchild (person, people, greatGrandchild = []) {
 		return ele.parents.includes(grandchild[i].id)
 	}));
 	}
+	if(greatGrandchild.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no great grandchildren.");
+	}
+	else {
+		alert(greatGrandchild.map(function(greatGrandchild){
+		return person.firstName + " " + person.lastName + "'s great grandchild: " + greatGrandchild.firstName + " " + greatGrandchild.lastName + ".";
+		}).join("\n"));
+	}
 	return greatGrandchild;
 }
 
-/*
-function searchDescendants (person, people, filteredNameKids = []) {
-	var descendants = people.filter(function(el) {
+function findGreatGrandchild (person, people) {
+	var child = [];
+	var grandchild = [];
+	var greatGrandchild = [];
+	child = people.filter(function(el) {
 		return el.parents.includes(person.id)
 	});
-	if (descendants <=0) {
-		return filteredNameKids;
-	}
-	
-	descendants.map(function(obj) {
-		filteredNameKids.push(obj)
+	for (var i = 0; i < child.length; i++) {		
+		grandchild = people.filter(function(obj) {
+		return obj.parents.includes(child[i].id)
 	});
-	
-	for (var i = 0; i < descendants.length; i++) {
-		filteredNameKids = searchDescendants(descendants[i], people, filteredNameKids);
 	}
-	return filteredNameKids;
+	for (var i = 0; i < grandchild.length; i++) {		
+		greatGrandchild.push(...people.filter(function(ele) {
+		return ele.parents.includes(grandchild[i].id)
+	}));
+	}
+	if(greatGrandchild.length === 0){
+		alert(person.firstName + " " + person.lastName + " has no great grandchildren.");
+	}
+	else {
+		alert(greatGrandchild.map(function(greatGrandchild){
+		return person.firstName + " " + person.lastName + "'s great grandchild: " + greatGrandchild.firstName + " " + greatGrandchild.lastName + ".";
+		}).join("\n"));
+	}
+	return greatGrandchild;
 }
-*/
-
-
-
-
-
-
-
-
 
 
 function findNextOfKin (person, people) {
-	spouse = findSpouse (person, people);
-	children = findChildren(person, people);
-	parents = findParents (person, people);
-	siblings = findSiblings (person, people);
-	grandchild = findGrandchild (person, people);
-	grandparents = findGrandparents (person, people);
+	findSpouse (person, people);
+	findChildren(person, people);
+	findParents (person, people);
+	findSiblings (person, people);
+	findGrandchild (person, people);
+	findGrandparents (person, people);
+	findNieceNephew (person, people);
+	findAuntUncle (person, people);
+	findGreatGrandchild (person, people);
+	findGreatGrandchild (person, people);
 }
 
-function findNieceNephew (person, people) {
-	var siblings = people.filter(function (el) {
-		return el.parents.includes(person.parents[0]) || el.parents.includes(person.parents[1]) 
-	});
-	var nieceNephew
-	for (var i = 0; i < siblings.length; i++) {
-		var nieceNephew = people.filter(function(el) {
-		return el.parents.includes(siblings[i].id)
-		});
-	}
-		return nieceNephew;	
-}
 
-function findAuntUncle (person, people) {
-	var parents = people.filter(function(el) {
-		return person.parents.includes(el.id);
-	})
-	var auntsUncles
-	for (var i = 0; i < parents.length; i++) {
-		auntsUncles = people.filter(function(el) {
-			return el.parents.includes(parents[i].parents[0]) || el.parents.includes(parents[i].parents[1]);
-		});
-	}
-	return auntsUncles;
-}
 					
 // alerts a list of people
 function displayPeople(people){
