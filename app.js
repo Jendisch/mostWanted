@@ -15,6 +15,7 @@ function app(people){
   }
 }
 
+
 function searchByName(people){
 	var firstName = prompt("What is the person's first name?");
 	var lastName = prompt("What is the person's last name?");
@@ -29,33 +30,35 @@ function searchByName(people){
 }
 
 
-/*
-
-
-*/
-
-
-
-
 function mainMenu(person, people){
 
   if(person.length <= 0){
     alert("Unable to find person with that name in our database, please enter another name.");
     return app(people); 
   }
-  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'").toLowerCase();
+  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', 'descendants', or 'next of kin'? Type the option you want or 'restart' or 'quit'").toLowerCase();
 	
   switch(displayOption){
     case "info":
 		displayPerson(person);
     break;
     case "family":
-		searchForFamily(person, people);
+		children = findChildren(person, people);
+		spouse = findSpouse (person, people);
+		parents = findParents (person, people);
+		siblings = findSiblings (person, people);
+		displayPeople(children);
+		displayPeople(spouse);
+		displayPeople(parents);
+		displayPeople(siblings);
     break;
     case "descendants":
 		var descendantsAll = searchDescendants(person, people);
 		displayPeople(descendantsAll);
     break;
+	case "next of kin":
+		findNextOfKin (person, people);
+	break;
     case "restart":
 		app(people); // restart
     break;
@@ -97,21 +100,47 @@ function searchDescendants (person, people, filteredNameKids = []) {
 	}
 	return filteredNameKids;
 }
-
-
 	
 	
-	
-	
-function searchForFamily (person, people) {
-
-
-
+function findChildren (person, people) {
+	var children = people.filter(function(el) {
+		return el.parents.includes(person.id)
+	});
+	return children;
 }	
 
 
+function findSpouse (person, people) {
+	var spouse = people.filter(function(el) {
+		return el.currentSpouse === person.id
+	});
+	return spouse;
+}
 
 
+function findParents (person, people) {
+	var parents = people.filter(function(el) {
+		return el.id === person.parents[0] || el.id === person.parents[1]
+	});
+	return parents;
+}
+
+
+function findSiblings (person, people) {
+	var siblings = people.filter(function(el) {
+		return el.parents.includes(person.parents[0]) || el.parents.includes(person.parents[1])
+		});
+	return siblings;
+}
+
+
+function findNextOfKin (person, people) {
+	spouse = findSpouse (person, people);
+	children = findChildren(person, people);
+	parents = findParents (person, people);
+	siblings = findSiblings (person, people);
+	
+}
 
 
 
