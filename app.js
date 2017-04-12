@@ -220,6 +220,7 @@ function findGrandparents (person, people) {
 	return grandparents;
 }	
 
+
 function findNieceNephew (person, people) {
 	var siblings = people.filter(function (el) {
 		if ( el.id === person.id){
@@ -273,18 +274,21 @@ function findAuntUncle (person, people) {
 function findGreatGrandchild (person, people) {
 	var child = [];
 	var grandchild = [];
+function findGreatGrandchild (person, people, greatGrandchild = []) {
+	var parents = [];
+	var grandchild = [];
 	var greatGrandchild = [];
-	child = people.filter(function(el) {
-		return el.parents.includes(person.id)
+	parents = people.filter(function(el) {
+		return el.id.includes(person.parents)
 	});
 	for (var i = 0; i < child.length; i++) {		
 		grandchild = people.filter(function(obj) {
-		return obj.parents.includes(child[i].id)
+		return obj.parents.includes(parents[i].id)
 	});
 	}
 	for (var i = 0; i < grandchild.length; i++) {		
 		greatGrandchild.push(...people.filter(function(ele) {
-		return ele.parents.includes(grandchild[i].id)
+		return ele.grandchild.includes(parents[i].id)
 	}));
 	}
 	if(greatGrandchild.length === 0){
@@ -297,6 +301,7 @@ function findGreatGrandchild (person, people) {
 	}
 	return greatGrandchild;
 }
+
 
 function findGreatGrandchild (person, people) {
 	var child = [];
@@ -324,6 +329,26 @@ function findGreatGrandchild (person, people) {
 		}).join("\n"));
 	}
 	return greatGrandchild;
+}
+
+
+function findGreatGrandparents(person, people) {
+	var parents = [];
+	var grandparents = [];
+	var greatGrandparents = [];
+	parents = people.filter(function(el) {
+		return person.parents.includes(el.id)
+	});
+	for (var i = 0; i < parents.length; i++) {
+		grandparents.push(...people.filter(function(obj) {
+		return parents[i].parents.includes(obj.id) 
+	}))};
+	for (var j = 0; j < grandparents.length; j++){
+		greatGrandparents.push(...people.filter(function(ele) {
+		return grandparents[j].parents.includes(ele.id)
+	}))}
+	console.log (greatGrandparents);
+	return greatGrandparents
 }
 
 
