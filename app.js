@@ -108,6 +108,21 @@ function searchDescendants (person, people, filteredNameKids = []) {
 	return filteredNameKids;
 }
 
+
+function findNextOfKin (person, people) {
+	findSpouse (person, people);
+	findChildren(person, people);
+	findParents (person, people);
+	findSiblings (person, people);
+	findGrandchild (person, people);
+	findGrandparents (person, people);
+	findNieceNephew (person, people);
+	findAuntUncle (person, people);
+	findGreatGrandchild (person, people);
+	findGreatGrandchild (person, people);
+}
+
+
 function findSpouse (person, people) {
 	var spouse = people.filter(function(el) {
 		return el.currentSpouse === person.id
@@ -300,36 +315,8 @@ function findGreatGrandchild (person, people, greatGrandchild = []) {
 		}).join("\n"));
 	}
 	return greatGrandchild;
-}
+}}
 
-
-function findGreatGrandchild (person, people) {
-	var child = [];
-	var grandchild = [];
-	var greatGrandchild = [];
-	child = people.filter(function(el) {
-		return el.parents.includes(person.id)
-	});
-	for (var i = 0; i < child.length; i++) {		
-		grandchild = people.filter(function(obj) {
-		return obj.parents.includes(child[i].id)
-	});
-	}
-	for (var i = 0; i < grandchild.length; i++) {		
-		greatGrandchild.push(...people.filter(function(ele) {
-		return ele.parents.includes(grandchild[i].id)
-	}));
-	}
-	if(greatGrandchild.length === 0){
-		alert(person.firstName + " " + person.lastName + " has no great grandchildren.");
-	}
-	else {
-		alert(greatGrandchild.map(function(greatGrandchild){
-		return person.firstName + " " + person.lastName + "'s great grandchild: " + greatGrandchild.firstName + " " + greatGrandchild.lastName + ".";
-		}).join("\n"));
-	}
-	return greatGrandchild;
-}
 
 
 function findGreatGrandparents(person, people) {
@@ -350,21 +337,6 @@ function findGreatGrandparents(person, people) {
 	console.log (greatGrandparents);
 	return greatGrandparents
 }
-
-
-function findNextOfKin (person, people) {
-	findSpouse (person, people);
-	findChildren(person, people);
-	findParents (person, people);
-	findSiblings (person, people);
-	findGrandchild (person, people);
-	findGrandparents (person, people);
-	findNieceNephew (person, people);
-	findAuntUncle (person, people);
-	findGreatGrandchild (person, people);
-	findGreatGrandchild (person, people);
-}
-
 
 					
 // alerts a list of people
