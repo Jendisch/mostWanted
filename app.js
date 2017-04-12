@@ -64,9 +64,9 @@ function mainMenu(person, people){
     case "restart":
 		app(people); // restart
     break;
-    case "niece nephew":
-    	var nieceNeph = findNieceNephew (person, people);
-    	displayPeople(nieceNeph);
+    case "ggp":
+    	var greatGrand = findGreatGrandparents (person, people);
+    	displayPeople(greatGrand);
     break
     case "search and filter":
     	var search = searchFilter (searchInput, people);
@@ -173,53 +173,43 @@ function findGrandparents (person, people) {
 }	
 
 function findGreatGrandchild (person, people, greatGrandchild = []) {
-	var child = [];
+	var parents = [];
 	var grandchil = [];
 	var greatGrandchild = [];
-	child = people.filter(function(el) {
-		return el.parents.includes(person.id)
+	parents = people.filter(function(el) {
+		return el.id.includes(person.parents)
 	});
 	for (var i = 0; i < child.length; i++) {		
 		grandchild = people.filter(function(obj) {
-		return obj.parents.includes(child[i].id)
+		return obj.parents.includes(parents[i].id)
 	});
 	}
 	for (var i = 0; i < grandchild.length; i++) {		
 		greatGrandchild.push(...people.filter(function(ele) {
-		return ele.parents.includes(grandchild[i].id)
+		return ele.grandchild.includes(parents[i].id)
 	}));
 	}
 	return greatGrandchild;
 }
 
-/*
-function searchDescendants (person, people, filteredNameKids = []) {
-	var descendants = people.filter(function(el) {
-		return el.parents.includes(person.id)
+function findGreatGrandparents(person, people) {
+	var parents = [];
+	var grandparents = [];
+	var greatGrandparents = [];
+	parents = people.filter(function(el) {
+		return person.parents.includes(el.id)
 	});
-	if (descendants <=0) {
-		return filteredNameKids;
-	}
-	
-	descendants.map(function(obj) {
-		filteredNameKids.push(obj)
-	});
-	
-	for (var i = 0; i < descendants.length; i++) {
-		filteredNameKids = searchDescendants(descendants[i], people, filteredNameKids);
-	}
-	return filteredNameKids;
+	for (var i = 0; i < parents.length; i++) {
+		grandparents.push(...people.filter(function(obj) {
+		return parents[i].parents.includes(obj.id) 
+	}))};
+	for (var j = 0; j < grandparents.length; j++){
+		greatGrandparents.push(...people.filter(function(ele) {
+		return grandparents[j].parents.includes(ele.id)
+	}))}
+	console.log (greatGrandparents);
+	return greatGrandparents
 }
-*/
-
-
-
-
-
-
-
-
-
 
 function findNextOfKin (person, people) {
 	spouse = findSpouse (person, people);

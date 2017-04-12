@@ -1,3 +1,37 @@
+function findGrandparents (person, people) {
+	var momDad = [];
+	var grandparents = [];
+	momDad = people.filter(function(el) {
+		return person.parents.includes(el.id)
+	});
+	for (var i = 0; i < momDad.length; i++) {		
+		grandparents.push(...people.filter(function(obj) {
+		return momDad[i].parents.includes(obj.id)
+	}));
+	}
+	return grandparents;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function app(people){
