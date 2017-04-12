@@ -57,8 +57,8 @@ function mainMenu(person, people){
 		displayPeople(descendantsAll);
     break;
 	case "next of kin":
-		grandparents = findGrandparents (person, people)
-		displayPeople(grandparents);
+		greatGrandchild = findGreatGrandchild (person, people);
+		displayPeople(greatGrandchild);
 		//findNextOfKin (person, people);
 	break;
     case "restart":
@@ -164,6 +164,54 @@ function findGrandparents (person, people) {
 	}
 	return grandparents;
 }	
+
+function findGreatGrandchild (person, people, greatGrandchild = []) {
+	var child = [];
+	var grandchil = [];
+	var greatGrandchild = [];
+	child = people.filter(function(el) {
+		return el.parents.includes(person.id)
+	});
+	for (var i = 0; i < child.length; i++) {		
+		grandchild = people.filter(function(obj) {
+		return obj.parents.includes(child[i].id)
+	});
+	}
+	for (var i = 0; i < grandchild.length; i++) {		
+		greatGrandchild.push(...people.filter(function(ele) {
+		return ele.parents.includes(grandchild[i].id)
+	}));
+	}
+	return greatGrandchild;
+}
+
+/*
+function searchDescendants (person, people, filteredNameKids = []) {
+	var descendants = people.filter(function(el) {
+		return el.parents.includes(person.id)
+	});
+	if (descendants <=0) {
+		return filteredNameKids;
+	}
+	
+	descendants.map(function(obj) {
+		filteredNameKids.push(obj)
+	});
+	
+	for (var i = 0; i < descendants.length; i++) {
+		filteredNameKids = searchDescendants(descendants[i], people, filteredNameKids);
+	}
+	return filteredNameKids;
+}
+*/
+
+
+
+
+
+
+
+
 
 
 function findNextOfKin (person, people) {

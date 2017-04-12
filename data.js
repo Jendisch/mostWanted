@@ -285,5 +285,18 @@ const data = [
 		"occupation": "doctor",
 		"parents": [313207561, 313997561],
 		"currentSpouse": null
+	},
+	{
+		"id": 313998001,
+		"firstName": "Alex",
+		"lastName": "Madden",
+		"gender": "male",
+		"dob": "2/02/2007",
+		"height": 60,
+		"weight": 100,
+		"eyeColor": "blue",
+		"occupation": "student",
+		"parents": [313998000],
+		"currentSpouse": null
 	}
 ];
