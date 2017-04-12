@@ -62,6 +62,13 @@ function mainMenu(person, people){
     case "restart":
 		app(people); // restart
     break;
+    case "niece nephew":
+    	var nieceNeph = findNieceNephew (person, people);
+    	displayPeople(nieceNeph);
+    break
+    case "search and filter":
+    	var search = searchFilter (searchInput, people);
+    	displayPeople(auntUncle)
     case "quit":
 		return; // stop execution
     default:
@@ -139,11 +146,33 @@ function findNextOfKin (person, people) {
 	children = findChildren(person, people);
 	parents = findParents (person, people);
 	siblings = findSiblings (person, people);
-	
 }
 
+function findNieceNephew (person, people) {
+	var siblings = people.filter(function (el) {
+		return el.parents.includes(person.parents[0]) || el.parents.includes(person.parents[1]) 
+	});
+	var nieceNephew
+	for (var i = 0; i < siblings.length; i++) {
+		var nieceNephew = people.filter(function(el) {
+		return el.parents.includes(siblings[i].id)
+		});
+	}
+		return nieceNephew;	
+}
 
-
+function findAuntUncle (person, people) {
+	var parents = people.filter(function(el) {
+		return person.parents.includes(el.id);
+	})
+	var auntsUncles
+	for (var i = 0; i < parents.length; i++) {
+		auntsUncles = people.filter(function(el) {
+			return el.parents.includes(parents[i].parents[0]) || el.parents.includes(parents[i].parents[1]);
+		});
+	}
+	return auntsUncles;
+}
 					
 // alerts a list of people
 function displayPeople(people){
