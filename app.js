@@ -9,10 +9,11 @@ function app(people){
     case 'no':
 		var age = askAge(people);
 		var ageRange = askAgeRange(people);
-		//var height = askHeight(people);
+		var height = askHeight(people);
 		var weight = askWeight(people);
 		var occupation = askOccupation(people);
 		var eyeColor = askEyeColor(people);
+
 		
     break;
     default:
@@ -59,6 +60,9 @@ function mainMenu(person, people){
     break;
 	case "next of kin":
 		findNextOfKin (person, people);
+	break;
+	case 'h':
+    	askHeight(people);
 	break;
     case "restart":
 		app(people); // restart
@@ -344,7 +348,6 @@ function findGreatGrandparents(person, people) {
 	console.log (greatGrandparents);
 	return greatGrandparents
 }
-
 	
 
 function askAge() {
@@ -398,10 +401,28 @@ function askAgeRange() {
 }
 		
 
-
-
-
-
+function askHeight(people) {
+	var height = [];
+	var heightInput = prompt("Do you know the height of the person you're looking for? If you do enter data the as feet'inches\". If you don't, type 'pass' to skip.").toLowerCase();
+	heightInput = heightInput.replace("\"", "");
+	heightInput = heightInput.split("'");
+	heightInput[0] = parseInt(heightInput[0]);
+	heightInput[1] = parseInt(heightInput[1]);
+	height.push((heightInput[0]*12) + heightInput[1]);
+	if (height === "Pass") {
+		return;
+	}
+	else if (height >0 && height <130) {
+		return height;
+	} 
+	else if (height < 0 || height > 130) {
+		prompt("Please enter a height under 10 feet.")
+		return askHeight();
+	} 
+	else {alert("No results found, please try a different search.")
+		return askHeight();
+	}	
+}
 
 
 function askWeight() {
@@ -481,3 +502,4 @@ function yesNo(input){
 function chars(input){
   return true; // default validation only
 }
+
