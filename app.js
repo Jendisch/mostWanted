@@ -7,11 +7,12 @@ function app(people){
 		searchByName(people);
     break;
     case 'no':
-		var age = askAgeAndAgeRange(people);
-		//var height = askHeight(people);
+		// var age = askAgeAndAgeRange(people);
+		var height = askHeight(people);
 		//var weight = askWeight(people);
 		//var occupation = askOccupation(people);
 		//var eyeColor = askEyeColor(people);
+
 		
     break;
     default:
@@ -441,15 +442,21 @@ function chars(input){
 
 function askHeight(people) {
 	var height = [];
-	var heightInput = prompt("Enter the height of the person you're looking for. Enter data the as inches'feet\"");
+	var heightInput = prompt("Enter the height of the person you're looking for. Enter data the as feet'inches\". Type 'Pass' to skip.").toLowerCase();
 	heightInput = heightInput.replace("\"", "");
 	heightInput = heightInput.split("'");
 	heightInput[0] = parseInt(heightInput[0]);
 	heightInput[1] = parseInt(heightInput[1]);
 	height.push((heightInput[0]*12) + heightInput[1]);
-	if (height < 0 || height > 130) {
+	if (height === "Pass") {
+		return;
+	}
+	else if (height >0 && height <130) {
+		return height;
+	} else if (height < 0 || height > 130) {
 		prompt("Please enter a height under 10 feet.")
 		return askHeight();
-	}
-		return height;	
+	} else {alert("No results found, please try a different search.")
+		return askHeight();
+	}	
 }
