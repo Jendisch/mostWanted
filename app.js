@@ -7,7 +7,12 @@ function app(people){
 		searchByName(people);
     break;
     case 'no':
-		//search through a trait
+		var age = askAgeAndAgeRange(people);
+		//var height = askHeight(people);
+		//var weight = askWeight(people);
+		//var occupation = askOccupation(people);
+		//var eyeColor = askEyeColor(people);
+		
     break;
     default:
 		app(people); 
@@ -66,6 +71,7 @@ function mainMenu(person, people){
 		return mainMenu(person, people); // ask again
   }
 }
+
 
 function displayPerson(person){
   var personInfo = "First Name: " + person.firstName + "\n";
@@ -341,21 +347,71 @@ function findGreatGrandparents(person, people) {
 	return greatGrandparents
 }
 
-function askHeight(people) {
-	var height = [];
-	var heightInput = prompt("Enter the height of the person you're looking for. Enter data the as inches'feet\"");
-	heightInput = heightInput.replace("\"", "");
-	heightInput = heightInput.split("'");
-	heightInput[0] = parseInt(heightInput[0]);
-	heightInput[1] = parseInt(heightInput[1]);
-	height.push((heightInput[0]*12) + heightInput[1]);
-	if (height < 0 || height > 130) {
-		prompt("Please enter a height under 10 feet.")
-		return askHeight();
-	}
-		return height;	
+
+function askAgeAndAgeRange (people){
+	var ageOrAgeRange = prompt("Do you know either the 'age' or 'age range' of the person you're seraching for? If you do, type the option you're looking for. If you don't, type 'pass'.").toLowerCase();
+		switch(ageOrAgeRange){
+			case "age":
+				var age = askAge();
+			break;
+			case "age range":
+				var ageRange = askAgeRange();
+			break;
+			case "pass":
+				return;
+			break;
+			default:
+				return askAgeAndAgeRange (people);
+		}
+}
+	
+
+function askAge() {
+	age = prompt("Please enter the age of the person you're looking for. (Use number format: 23 or 30 or 40 etc.)");
+		if (age < 0 || age > 200) {
+			alert("No results found, please try a different search.");
+			return askAge();
+		}
+		else if (age > 0 && age < 200) {
+			return age;
+		}
+		else {
+			alert("No results found, please try a different search.");
+			return askAge();
+		}
+	return age;
 }
 
+
+
+function askAgeRange() {
+	ageRange = [];
+	var ageRangeLow = prompt("Please enter THE YOUNGEST AGE that the person could be. (Use number format: 23 or 30 or 40 etc.)");
+		if (ageRangeLow < 0 || ageRangeLow > 200) {
+			alert("No results found, please try a different search.");
+			return askAgeRange();
+		}
+		else if (ageRangeLow > 0 && ageRangeLow < 200) {
+			ageRange.push(ageRangeLow);
+		}
+		else {
+			alert("No results found, please try a different search.");
+			return askAgeRange();
+		}
+	var ageRangeHigh = prompt("Please enter THE OLDEST AGE that the person could be. (Use number format: 23 or 30 or 40 etc.)");
+		if (ageRangeHigh < 0 || ageRangeHigh > 200) {
+			alert("No results found, please try a different search.");
+			return askAgeRange();
+		}
+		else if (ageRangeHigh > 0 && ageRangeHigh < 200) {
+			ageRange.push(ageRangeHigh);
+		}
+		else {
+			alert("No results found, please try a different search.");
+			return askAgeRange();
+		}
+	return ageRange;
+}
 
 					
 // alerts a list of people
@@ -381,4 +437,19 @@ function yesNo(input){
 // helper function to pass in as default promptFor validation
 function chars(input){
   return true; // default validation only
+}
+
+function askHeight(people) {
+	var height = [];
+	var heightInput = prompt("Enter the height of the person you're looking for. Enter data the as inches'feet\"");
+	heightInput = heightInput.replace("\"", "");
+	heightInput = heightInput.split("'");
+	heightInput[0] = parseInt(heightInput[0]);
+	heightInput[1] = parseInt(heightInput[1]);
+	height.push((heightInput[0]*12) + heightInput[1]);
+	if (height < 0 || height > 130) {
+		prompt("Please enter a height under 10 feet.")
+		return askHeight();
+	}
+		return height;	
 }
