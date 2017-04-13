@@ -54,6 +54,9 @@ function mainMenu(person, people){
 	case "next of kin":
 		findNextOfKin (person, people);
 	break;
+	case 'h':
+    	askHeight(people);
+	break;
     case "restart":
 		app(people); // restart
     break;
@@ -337,6 +340,22 @@ function findGreatGrandparents(person, people) {
 	console.log (greatGrandparents);
 	return greatGrandparents
 }
+
+function askHeight(people) {
+	var height = [];
+	var heightInput = prompt("Enter the height of the person you're looking for. Enter data the as inches'feet\"");
+	heightInput = heightInput.replace("\"", "");
+	heightInput = heightInput.split("'");
+	heightInput[0] = parseInt(heightInput[0]);
+	heightInput[1] = parseInt(heightInput[1]);
+	height.push((heightInput[0]*12) + heightInput[1]);
+	if (height < 0 || height > 130) {
+		prompt("Please enter a height under 10 feet.")
+		return askHeight();
+	}
+		return height;	
+}
+
 
 					
 // alerts a list of people
