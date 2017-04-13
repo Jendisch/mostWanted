@@ -7,11 +7,12 @@ function app(people){
 		searchByName(people);
     break;
     case 'no':
-		var age = askAgeAndAgeRange(people);
+		var age = askAge(people);
+		var ageRange = askAgeRange(people);
 		//var height = askHeight(people);
-		//var weight = askWeight(people);
-		//var occupation = askOccupation(people);
-		//var eyeColor = askEyeColor(people);
+		var weight = askWeight(people);
+		var occupation = askOccupation(people);
+		var eyeColor = askEyeColor(people);
 		
     break;
     default:
@@ -344,35 +345,19 @@ function findGreatGrandparents(person, people) {
 	return greatGrandparents
 }
 
-
-
-
-function askAgeAndAgeRange (people){
-	var ageOrAgeRange = prompt("Do you know either the 'age' or 'age range' of the person you're seraching for? If you do, type the option you're looking for. If you don't, type 'pass'.").toLowerCase();
-		switch(ageOrAgeRange){
-			case "age":
-				var age = askAge();
-			break;
-			case "age range":
-				var ageRange = askAgeRange();
-			break;
-			case "pass":
-				return;
-			break;
-			default:
-				return askAgeAndAgeRange (people);
-		}
-}
 	
 
 function askAge() {
-	age = prompt("Please enter the age of the person you're looking for. (Use number format: 23 or 30 or 40 etc.)");
+	age = prompt("Do you know the exact age of the person you're seraching for? If you do, please input it below. If you don't know the exact age but only an age range, type 'pass'. If you don't know the age at all, type 'pass'. (Use number format: 23 or 30 or 40 etc.)").toLowerCase();
 		if (age < 0 || age > 200) {
 			alert("No results found, please try a different search.");
 			return askAge();
 		}
 		else if (age > 0 && age < 200) {
 			return age;
+		}
+		else if (age === "pass"){
+			return;
 		}
 		else {
 			alert("No results found, please try a different search.");
@@ -384,36 +369,91 @@ function askAge() {
 
 
 function askAgeRange() {
-	ageRange = [];
-	var ageRangeLow = prompt("Please enter THE YOUNGEST AGE that the person could be. (Use number format: 23 or 30 or 40 etc.)");
-		if (ageRangeLow < 0 || ageRangeLow > 200) {
-			alert("No results found, please try a different search.");
-			return askAgeRange();
+	if (age > 0){
+		return;
+	}
+	var ageRange = prompt("Do you know the the age range of the person you're searching for? If you do, please input it below. If you don't know the age at all, type 'pass'. (Use number format: '23-27' or '30-40' etc.)").toLowerCase();
+	ageRange = ageRange.split("-");
+	ageRange[0] = parseInt(ageRange[0]);
+	ageRange[1] = parseInt(ageRange[1]);
+	if (ageRange[0] < 0 || ageRange[0] > 200) {
+		alert("No results found, please try a different search.");
+		return askAgeRange();
+	}
+	else if (ageRange[1] < 0 || ageRange[1] > 200) {
+		alert("No results found, please try a different search.");
+		return askAgeRange();
+	}
+	else if (ageRange[0] > 0 && ageRange[1] < 200) {
+		console.log(ageRange);
+		return ageRange;
+	}
+	else if (age === "pass"){
+			return;
 		}
-		else if (ageRangeLow > 0 && ageRangeLow < 200) {
-			ageRange.push(ageRangeLow);
+	else {
+		alert("No results found, please try a different search.");
+		return askAgeRange();
+	}
+}
+		
+
+
+
+
+
+
+
+function askWeight() {
+	weight = prompt("Do you know the weight in pounds of the person you're searching for? If you do, please input here. If you don't, type 'pass'. (Use number format: 100 or 125 etc.)").toLowerCase();
+		if (weight < 0 || weight > 1000) {
+			alert("No results found, please try a different search.");
+			return askWeight();
+		}
+		else if (weight > 0 && weight < 1000) {
+			return weight;
+		}
+		else if(weight === "pass"){
+			return;
 		}
 		else {
 			alert("No results found, please try a different search.");
-			return askAgeRange();
+			return askWeight();
 		}
-	var ageRangeHigh = prompt("Please enter THE OLDEST AGE that the person could be. (Use number format: 23 or 30 or 40 etc.)");
-		if (ageRangeHigh < 0 || ageRangeHigh > 200) {
-			alert("No results found, please try a different search.");
-			return askAgeRange();
-		}
-		else if (ageRangeHigh > 0 && ageRangeHigh < 200) {
-			ageRange.push(ageRangeHigh);
-		}
-		else {
-			alert("No results found, please try a different search.");
-			return askAgeRange();
-		}
-	return ageRange;
+	return weight;
 }
 
 
+function askOccupation() {
+	occupation = prompt("Do you know the occupation of the person you're searching for? If you do, please input here. If you don't, type 'pass'.").toLowerCase();
+		if (occupation === "pass") {
+			return;
+		}
+		else if (occupation === "programmer" || occupation === "assistant" || occupation === "landscaper" || occupation === "nurse" || occupation === "student" || occupation === "architect" || occupation === "doctor" || occupation === "politician") {
+			return occupation;
+		}
+		else {
+			alert("No results found, please try a different search.");
+			return askOccupation();
+		}
+	return occupation;
+}
 
+
+function askEyeColor() {
+	eyeColor = prompt("Do you know the eye color of the person you're searching for? If you do, please input here. If you don't, type 'pass'.").toLowerCase();
+		if (eyeColor === "pass") {
+			return;
+		}
+		else if (eyeColor === "brown" || eyeColor === "green" || eyeColor === "hazel" || eyeColor === "blue" || eyeColor === "black") {
+			return eyeColor;
+		}
+		else {
+			alert("No results found, please try a different search.");
+			return askEyeColor();
+		}
+	return eyeColor;
+}
 
 
 					
