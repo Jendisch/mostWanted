@@ -7,14 +7,16 @@ function app(people){
 		searchByName(people);
     break;
     case 'no':
-		var age = askAge(people);
-		var ageRange = askAgeRange(people);
-		var height = askHeight(people);
-		var weight = askWeight(people);
-		var occupation = askOccupation(people);
-		var eyeColor = askEyeColor(people);
-
-		
+		var dobToAgeRange;
+		var dobToAge = askAge(people);
+			if (dobToAge.length === 0){
+				dobToAgeRange = askAgeRange(people);
+			}
+		var foundHeight = askHeight(people);
+		var foundweight = askWeight(people);
+		var foundOccupation = askOccupation(people);
+		var foundEyeColor = askEyeColor(people);
+		filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor); 
     break;
     default:
 		app(people); 
@@ -350,31 +352,52 @@ function findGreatGrandparents(person, people) {
 }
 	
 
-function askAge() {
-	age = prompt("Do you know the exact age of the person you're seraching for? If you do, please input it below. If you don't know the exact age but only an age range, type 'pass'. If you don't know the age at all, type 'pass'. (Use number format: 23 or 30 or 40 etc.)").toLowerCase();
+function askAge(people) {
+	var dobToAge = [];
+	var age = prompt("Do you know the exact age of the person you're seraching for? If you do, please input it below. If you don't know the exact age but only an age range, type 'pass'. If you don't know the age at all, type 'pass'. (Use number format: 23 or 30 or 40 etc.)").toLowerCase();
 		if (age < 0 || age > 200) {
 			alert("No results found, please try a different search.");
 			return askAge();
 		}
 		else if (age > 0 && age < 200) {
-			return age;
+			dobToAge = findAge (people, age);
+			return dobToAge;
 		}
 		else if (age === "pass"){
-			return;
+			return [];
 		}
 		else {
 			alert("No results found, please try a different search.");
 			return askAge();
 		}
-	return age;
+		
 }
 
 
+function findAge(people, age){
+	var today = new Date();
+	var dobToAge = people.filter(function(el) {
+		var birthDate = new Date(el.dob);
+		var ageToCheck = today.getFullYear() - birthDate.getFullYear();
+		var m = today.getMonth() - birthDate.getMonth();
+		if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
+		{
+			ageToCheck--;
+		}
+		if (ageToCheck == age) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	});
+	displayPeople(dobToAge);
+	return dobToAge;
+}
 
-function askAgeRange() {
-	if (age > 0){
-		return;
-	}
+
+function askAgeRange(people) {
+	var dobToAgeRange = [];
 	var ageRange = prompt("Do you know the the age range of the person you're searching for? If you do, please input it below. If you don't know the age at all, type 'pass'. (Use number format: '23-27' or '30-40' etc.)").toLowerCase();
 	ageRange = ageRange.split("-");
 	ageRange[0] = parseInt(ageRange[0]);
@@ -388,8 +411,8 @@ function askAgeRange() {
 		return askAgeRange();
 	}
 	else if (ageRange[0] > 0 && ageRange[1] < 200) {
-		console.log(ageRange);
-		return ageRange;
+		dobToAgeRange = findAgeRange(people, ageRange);
+		return dobToAgeRange;
 	}
 	else if (age === "pass"){
 			return;
@@ -399,21 +422,45 @@ function askAgeRange() {
 		return askAgeRange();
 	}
 }
+
+
+function findAgeRange(people, ageRange){
+	var today = new Date();
+	var dobToAgeRange = people.filter(function(el) {
+		var birthDate = new Date(el.dob);
+		var ageToCheck = today.getFullYear() - birthDate.getFullYear();
+		var m = today.getMonth() - birthDate.getMonth();
+		if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
+		{
+			ageToCheck--;
+		}
+		if (ageToCheck >= ageRange[0] && ageToCheck <= ageRange[1]) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	});
+	displayPeople(dobToAgeRange);
+	return dobToAgeRange;
+}
 		
 
 function askHeight(people) {
 	var height = [];
+	var foundHeight = [];
 	var heightInput = prompt("Do you know the height of the person you're looking for? If you do enter data the as feet'inches\". If you don't, type 'pass' to skip.").toLowerCase();
+	if (heightInput === "pass") {
+		return;
+	}
 	heightInput = heightInput.replace("\"", "");
 	heightInput = heightInput.split("'");
 	heightInput[0] = parseInt(heightInput[0]);
 	heightInput[1] = parseInt(heightInput[1]);
 	height.push((heightInput[0]*12) + heightInput[1]);
-	if (height === "Pass") {
-		return;
-	}
-	else if (height >0 && height <130) {
-		return height;
+	if (height > 0 && height < 130) {
+		var foundHeight = findHeight(people, height);
+		return foundHeight;
 	} 
 	else if (height < 0 || height > 130) {
 		prompt("Please enter a height under 10 feet.")
@@ -425,14 +472,25 @@ function askHeight(people) {
 }
 
 
-function askWeight() {
+function findHeight(people, height){
+	foundHeight = people.filter(function(el) {
+		return el.height == height
+	});
+	displayPeople(foundHeight);
+	return foundHeight;
+}
+
+
+function askWeight(people) {
+	var foundWeight = [];
 	weight = prompt("Do you know the weight in pounds of the person you're searching for? If you do, please input here. If you don't, type 'pass'. (Use number format: 100 or 125 etc.)").toLowerCase();
 		if (weight < 0 || weight > 1000) {
 			alert("No results found, please try a different search.");
 			return askWeight();
 		}
 		else if (weight > 0 && weight < 1000) {
-			return weight;
+			foundWeight = findWeight(people, weight);
+			return foundWeight;
 		}
 		else if(weight === "pass"){
 			return;
@@ -441,17 +499,27 @@ function askWeight() {
 			alert("No results found, please try a different search.");
 			return askWeight();
 		}
-	return weight;
 }
 
 
-function askOccupation() {
+function findWeight(people, weight){
+	var foundWeight = people.filter(function(el) {
+		return el.weight == weight
+	});
+	displayPeople(foundWeight);
+	return foundWeight;
+}
+
+
+function askOccupation(people) {
+	var foundOccupation = [];
 	occupation = prompt("Do you know the occupation of the person you're searching for? If you do, please input here. If you don't, type 'pass'.").toLowerCase();
 		if (occupation === "pass") {
 			return;
 		}
 		else if (occupation === "programmer" || occupation === "assistant" || occupation === "landscaper" || occupation === "nurse" || occupation === "student" || occupation === "architect" || occupation === "doctor" || occupation === "politician") {
-			return occupation;
+			foundOccupation = findOccupation(people, occupation);
+			return foundOccupation;
 		}
 		else {
 			alert("No results found, please try a different search.");
@@ -460,14 +528,24 @@ function askOccupation() {
 	return occupation;
 }
 
+function findOccupation(people, occupation){
+	var foundOccupation = people.filter(function(el) {
+		return el.occupation == occupation
+	});
+	displayPeople(foundOccupation);
+	return foundOccupation;
+}
 
-function askEyeColor() {
+
+function askEyeColor(people) {
+	var foundEyeColor = [];
 	eyeColor = prompt("Do you know the eye color of the person you're searching for? If you do, please input here. If you don't, type 'pass'.").toLowerCase();
 		if (eyeColor === "pass") {
 			return;
 		}
 		else if (eyeColor === "brown" || eyeColor === "green" || eyeColor === "hazel" || eyeColor === "blue" || eyeColor === "black") {
-			return eyeColor;
+			foundEyeColor = findEyeColor(people, eyeColor);
+			return foundEyeColor;
 		}
 		else {
 			alert("No results found, please try a different search.");
@@ -475,6 +553,24 @@ function askEyeColor() {
 		}
 	return eyeColor;
 }
+
+
+function findEyeColor(people, eyeColor){
+	var foundEyeColor = people.filter(function(el) {
+		return el.eyeColor == eyeColor
+	});
+	displayPeople(foundEyeColor);
+	return foundEyeColor;
+}
+
+function filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor) {
+	var combinedTraits = dobToAge.concat(dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor);
+	console.log(combinedTraits);
+	displayPeople(combinedTraits);
+}
+
+
+
 
 
 					
