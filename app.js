@@ -1,23 +1,23 @@
 
 
 function app(people){
-  var searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
+  var searchType = prompt("Do you know the name of the person you are looking for? Enter 'yes' or 'no'.").toLowerCase();
   switch(searchType){
     case 'yes':
 		searchByName(people);
     break;
     case 'no':
-		var dobToAgeRange;
 		var dobToAge = askAge(people);
-			if (dobToAge.length === 0){
-				dobToAgeRange = askAgeRange(people);
+			if (dobToAge == "pass"){
+				dobToAge = askAgeRange(people);
 			}
-		var foundHeight = askHeight(people);
-		var foundweight = askWeight(people);
-		var foundOccupation = askOccupation(people);
-		var foundEyeColor = askEyeColor(people);
-		var combinedTraits = filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor, people); 
-		combinedTraits = cleanArray(combinedTraits);
+		var foundGender = askGender(dobToAge);
+		var foundHeight = askHeight(foundGender);
+		var foundWeight = askWeight(foundHeight);
+		var foundOccupation = askOccupation(foundWeight);
+		var foundEyeColor = askEyeColor(foundOccupation);
+		filterTraits (foundEyeColor); 
+		
     break;
     default:
 		app(people); 
@@ -68,12 +68,12 @@ function mainMenu(person, people){
     	askHeight(people);
 	break;
     case "restart":
-		app(people); // restart
+		app(people);
     break;
     case "quit":
-		return; // stop execution
+		return;
     default:
-		return mainMenu(person, people); // ask again
+		return mainMenu(person, people);
   }
 }
 
@@ -365,7 +365,8 @@ function askAge(people) {
 			return dobToAge;
 		}
 		else if (age === "pass"){
-			return [];
+			dobToAge = "pass";
+			return dobToAge;
 		}
 		else {
 			alert("No results found, please try a different search.");
@@ -397,25 +398,25 @@ function findAge(people, age){
 
 
 function askAgeRange(people) {
-	var dobToAgeRange = [];
-	var ageRange = prompt("Do you know the the age range of the person you're searching for? If you do, please input it below. If you don't know the age at all, type 'pass'. (Use number format: '23-27' or '30-40' etc.)").toLowerCase();
-	if (ageRange === "pass") {
-		return;
+	var dobToAge = prompt("Do you know the the age range of the person you're searching for? If you do, please input it below. If you don't know the age at all, type 'pass'. (Use number format: '23-27' or '30-40' etc.)").toLowerCase();
+	if (dobToAge == "pass") {
+		dobToAge = people;
+		return dobToAge;
 	}
-	ageRange = ageRange.split("-");
-	ageRange[0] = parseInt(ageRange[0]);
-	ageRange[1] = parseInt(ageRange[1]);
-	if (ageRange[0] < 0 || ageRange[0] > 200) {
+	dobToAge = dobToAge.split("-");
+	dobToAge[0] = parseInt(dobToAge[0]);
+	dobToAge[1] = parseInt(dobToAge[1]);
+	if (dobToAge[0] < 0 || dobToAge[0] > 200) {
 		alert("No results found, please try a different search.");
 		return askAgeRange();
 	}
-	else if (ageRange[1] < 0 || ageRange[1] > 200) {
+	else if (dobToAge[1] < 0 || dobToAge[1] > 200) {
 		alert("No results found, please try a different search.");
 		return askAgeRange();
 	}
-	else if (ageRange[0] > 0 && ageRange[1] < 200) {
-		dobToAgeRange = findAgeRange(people, ageRange);
-		return dobToAgeRange;
+	else if (dobToAge[0] > 0 && dobToAge[1] < 200) {
+		dobToAge = findAgeRange(people, dobToAge);
+		return dobToAge;
 	}
 	else {
 		alert("No results found, please try a different search.");
@@ -424,9 +425,9 @@ function askAgeRange(people) {
 }
 
 
-function findAgeRange(people, ageRange){
+function findAgeRange(people, dobToAge){
 	var today = new Date();
-	var dobToAgeRange = people.filter(function(el) {
+	dobToAge = people.filter(function(el) {
 		var birthDate = new Date(el.dob);
 		var ageToCheck = today.getFullYear() - birthDate.getFullYear();
 		var m = today.getMonth() - birthDate.getMonth();
@@ -434,23 +435,61 @@ function findAgeRange(people, ageRange){
 		{
 			ageToCheck--;
 		}
-		if (ageToCheck >= ageRange[0] && ageToCheck <= ageRange[1]) {
+		if (ageToCheck >= dobToAge[0] && ageToCheck <= dobToAge[1]) {
 			return true;
 		}
 		else {
 			return false;
 		}
 	});
-	return dobToAgeRange;
+	return dobToAge;
 }
+
+
+
+
+
+
+function askGender(dobToAge) {
+	var foundGender = [];
+	gender = prompt("Do you know the gender of the person you're searching for? If you do, please input here. If you don't, type 'pass'.").toLowerCase();
+		if (gender === "pass") {
+			foundGender = dobToAge;
+			return foundGender;
+		}
+		else if (gender === "male" || gender === "female") {
+			foundGender = findGender(dobToAge, gender);
+			return foundGender;
+		}
+		else {
+			alert("No results found, please try a different search.");
+			return askGender();
+		}
+	return foundGender;
+}
+
+
+function findGender(dobToAge, gender){
+	var foundGender = dobToAge.filter(function(el) {
+		return el.gender == gender
+	});
+	return foundGender;
+}
+
+
+
+
+
+
 		
 
-function askHeight(people) {
+function askHeight(foundGender) {
 	var height = [];
 	var foundHeight = [];
 	var heightInput = prompt("Do you know the height of the person you're looking for? If you do enter data the as feet'inches\". If you don't, type 'pass' to skip.").toLowerCase();
 	if (heightInput === "pass") {
-		return;
+		foundHeight = foundGender;
+		return foundHeight;
 	}
 	heightInput = heightInput.replace("\"", "");
 	heightInput = heightInput.split("'");
@@ -458,7 +497,7 @@ function askHeight(people) {
 	heightInput[1] = parseInt(heightInput[1]);
 	height.push((heightInput[0]*12) + heightInput[1]);
 	if (height > 0 && height < 130) {
-		var foundHeight = findHeight(people, height);
+		var foundHeight = findHeight(foundGender, height);
 		return foundHeight;
 	} 
 	else if (height < 0 || height > 130) {
@@ -471,15 +510,15 @@ function askHeight(people) {
 }
 
 
-function findHeight(people, height){
-	foundHeight = people.filter(function(el) {
+function findHeight(foundGender, height){
+	foundHeight = foundGender.filter(function(el) {
 		return el.height == height
 	});
 	return foundHeight;
 }
 
 
-function askWeight(people) {
+function askWeight(foundHeight) {
 	var foundWeight = [];
 	weight = prompt("Do you know the weight in pounds of the person you're searching for? If you do, please input here. If you don't, type 'pass'. (Use number format: 100 or 125 etc.)").toLowerCase();
 		if (weight < 0 || weight > 1000) {
@@ -487,11 +526,12 @@ function askWeight(people) {
 			return askWeight();
 		}
 		else if (weight > 0 && weight < 1000) {
-			foundWeight = findWeight(people, weight);
+			foundWeight = findWeight(foundHeight, weight);
 			return foundWeight;
 		}
 		else if(weight === "pass"){
-			return;
+			foundWeight = foundHeight
+			return foundWeight;
 		}
 		else {
 			alert("No results found, please try a different search.");
@@ -500,22 +540,23 @@ function askWeight(people) {
 }
 
 
-function findWeight(people, weight){
-	var foundWeight = people.filter(function(el) {
+function findWeight(foundHeight, weight){
+	var foundWeight = foundHeight.filter(function(el) {
 		return el.weight == weight
 	});
 	return foundWeight;
 }
 
 
-function askOccupation(people) {
+function askOccupation(foundWeight) {
 	var foundOccupation = [];
 	occupation = prompt("Do you know the occupation of the person you're searching for? If you do, please input here. If you don't, type 'pass'.").toLowerCase();
 		if (occupation === "pass") {
-			return;
+			foundOccupation = foundWeight;
+			return foundOccupation;
 		}
 		else if (occupation === "programmer" || occupation === "assistant" || occupation === "landscaper" || occupation === "nurse" || occupation === "student" || occupation === "architect" || occupation === "doctor" || occupation === "politician") {
-			foundOccupation = findOccupation(people, occupation);
+			foundOccupation = findOccupation(foundWeight, occupation);
 			return foundOccupation;
 		}
 		else {
@@ -525,22 +566,23 @@ function askOccupation(people) {
 	return occupation;
 }
 
-function findOccupation(people, occupation){
-	var foundOccupation = people.filter(function(el) {
+function findOccupation(foundWeight, occupation){
+	var foundOccupation = foundWeight.filter(function(el) {
 		return el.occupation == occupation
 	});
 	return foundOccupation;
 }
 
 
-function askEyeColor(people) {
+function askEyeColor(foundOccupation) {
 	var foundEyeColor = [];
 	eyeColor = prompt("Do you know the eye color of the person you're searching for? If you do, please input here. If you don't, type 'pass'.").toLowerCase();
 		if (eyeColor === "pass") {
-			return;
+			foundEyeColor = foundOccupation;
+			return foundEyeColor;
 		}
 		else if (eyeColor === "brown" || eyeColor === "green" || eyeColor === "hazel" || eyeColor === "blue" || eyeColor === "black") {
-			foundEyeColor = findEyeColor(people, eyeColor);
+			foundEyeColor = findEyeColor(foundOccupation, eyeColor);
 			return foundEyeColor;
 		}
 		else {
@@ -551,58 +593,24 @@ function askEyeColor(people) {
 }
 
 
-function findEyeColor(people, eyeColor){
-	var foundEyeColor = people.filter(function(el) {
+function findEyeColor(foundOccupation, eyeColor){
+	var foundEyeColor = foundOccupation.filter(function(el) {
 		return el.eyeColor == eyeColor
 	});
 	return foundEyeColor;
 }
 
-function filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor, people) {
-	var combinedTraits = dobToAge.concat(dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor);
-		return combinedTraits;
-	}
 
-
-
-function cleanArray(combinedTraits, people) {
-	combinedTraits = combinedTraits.filter(function(el) {
-		return el !== undefined;
-	});
-	combinedTraits = combinedTraits.filter(function(item, pos, self) {
-    return self.indexOf(item) == pos;
-})
+function filterTraits (foundEyeColor) {
 	alert("We are calculating the results of your search currently. The people in our database that meet the criteria you provided will show shortly.");
-	alert(combinedTraits.map(function(combinedTraits){
-    return combinedTraits.firstName + " " + combinedTraits.lastName;
+	alert(foundEyeColor.map(function(foundEyeColor){
+    return foundEyeColor.firstName + " " + foundEyeColor.lastName;
   }).join("\n"));
 }
-	
+				
 
-
-					
-// alerts a list of people
 function displayPeople(people){
   alert(people.map(function(person){
     return person.firstName + " " + person.lastName;
   }).join("\n"));
 }
-
-// function that prompts and validates user input
-function promptFor(question, valid){
-  do{
-    var response = prompt(question).trim();
-  } while(!response || !valid(response));
-  return response;
-}
-
-// helper function to pass into promptFor to validate yes/no answers
-function yesNo(input){
-  return input.toLowerCase() == "yes" || input.toLowerCase() == "no";
-}
-
-// helper function to pass in as default promptFor validation
-function chars(input){
-  return true; // default validation only
-}
-
