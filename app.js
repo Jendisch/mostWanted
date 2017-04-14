@@ -16,7 +16,8 @@ function app(people){
 		var foundweight = askWeight(people);
 		var foundOccupation = askOccupation(people);
 		var foundEyeColor = askEyeColor(people);
-		filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor); 
+		var combinedTraits = filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor, people); 
+		combinedTraits = cleanArray(combinedTraits);
     break;
     default:
 		app(people); 
@@ -391,7 +392,6 @@ function findAge(people, age){
 			return false;
 		}
 	});
-	displayPeople(dobToAge);
 	return dobToAge;
 }
 
@@ -399,6 +399,9 @@ function findAge(people, age){
 function askAgeRange(people) {
 	var dobToAgeRange = [];
 	var ageRange = prompt("Do you know the the age range of the person you're searching for? If you do, please input it below. If you don't know the age at all, type 'pass'. (Use number format: '23-27' or '30-40' etc.)").toLowerCase();
+	if (ageRange === "pass") {
+		return;
+	}
 	ageRange = ageRange.split("-");
 	ageRange[0] = parseInt(ageRange[0]);
 	ageRange[1] = parseInt(ageRange[1]);
@@ -414,9 +417,6 @@ function askAgeRange(people) {
 		dobToAgeRange = findAgeRange(people, ageRange);
 		return dobToAgeRange;
 	}
-	else if (age === "pass"){
-			return;
-		}
 	else {
 		alert("No results found, please try a different search.");
 		return askAgeRange();
@@ -441,7 +441,6 @@ function findAgeRange(people, ageRange){
 			return false;
 		}
 	});
-	displayPeople(dobToAgeRange);
 	return dobToAgeRange;
 }
 		
@@ -476,7 +475,6 @@ function findHeight(people, height){
 	foundHeight = people.filter(function(el) {
 		return el.height == height
 	});
-	displayPeople(foundHeight);
 	return foundHeight;
 }
 
@@ -506,7 +504,6 @@ function findWeight(people, weight){
 	var foundWeight = people.filter(function(el) {
 		return el.weight == weight
 	});
-	displayPeople(foundWeight);
 	return foundWeight;
 }
 
@@ -532,7 +529,6 @@ function findOccupation(people, occupation){
 	var foundOccupation = people.filter(function(el) {
 		return el.occupation == occupation
 	});
-	displayPeople(foundOccupation);
 	return foundOccupation;
 }
 
@@ -559,18 +555,29 @@ function findEyeColor(people, eyeColor){
 	var foundEyeColor = people.filter(function(el) {
 		return el.eyeColor == eyeColor
 	});
-	displayPeople(foundEyeColor);
 	return foundEyeColor;
 }
 
-function filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor) {
+function filterTraits (dobToAge, dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor, people) {
 	var combinedTraits = dobToAge.concat(dobToAgeRange, foundHeight, foundweight, foundOccupation, foundEyeColor);
-	console.log(combinedTraits);
-	displayPeople(combinedTraits);
+		return combinedTraits;
+	}
+
+
+
+function cleanArray(combinedTraits, people) {
+	combinedTraits = combinedTraits.filter(function(el) {
+		return el !== undefined;
+	});
+	combinedTraits = combinedTraits.filter(function(item, pos, self) {
+    return self.indexOf(item) == pos;
+})
+	alert("We are calculating the results of your search currently. The people in our database that meet the criteria you provided will show shortly.");
+	alert(combinedTraits.map(function(combinedTraits){
+    return combinedTraits.firstName + " " + combinedTraits.lastName;
+  }).join("\n"));
 }
-
-
-
+	
 
 
 					
